@@ -1,11 +1,12 @@
 #include "solver.h"
 #include "stockfish.h"
-#include "util.h"
-#include <assert.h>
-#include <iostream>
-#include <stdio.h>
 
-// Returns the number of possible helpmates in [n] or fewer plies
+// Given a position, returns the number of possible helpmates in [n]
+// or fewer plies where the losing player is the one with the turn on
+// the first call.
+// This function also prints on standard output the helpmate sequences
+// in UCI format.
+
 int SOLVER::helpmate(Position &pos, Depth n, UTIL::Search &search) {
 
   // To store an entry from the transposition table (TT)
@@ -15,7 +16,7 @@ int SOLVER::helpmate(Position &pos, Depth n, UTIL::Search &search) {
 
   // Checkmate!
   if (MoveList<LEGAL>(pos).size() == 0 && pos.checkers()) {
-    if (n % 2 == 0)
+    if (search.search_depth() % 2 == 0)
       search.print_solution();
 
     return n % 2 == 0 ? 1 : 0;
