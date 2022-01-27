@@ -22,6 +22,12 @@ jobs:
     - name: Install Stockfish
       working-directory: ./lib/stockfish
       run: sudo make install
+    - name: Download and compile CHA
+      working-directory: ./lib/cha
+      run: make
+    - name: Install CHA
+      working-directory: ./lib/cha
+      run: sudo make install
     - name: Enable shared libraries
       run: sudo /sbin/ldconfig -v
     - name: make test
