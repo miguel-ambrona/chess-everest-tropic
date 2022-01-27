@@ -25,13 +25,20 @@ Stipulation parse_line(Position &pos, float &nmoves, StateInfo *si,
 
   pos.set(fen, false, si, Threads.main());
 
-  nmoves = std::stof(stipulation.substr(2));
-
-  if (stipulation.substr(0, 2) == "h#")
+  if (stipulation.substr(0, 2) == "h#") {
+    nmoves = std::stof(stipulation.substr(2));
     return {COOPERATIVE, SOLVER::MATE};
+  }
 
-  else if (stipulation.substr(0, 2) == "h=")
+  else if (stipulation.substr(0, 2) == "h=") {
+    nmoves = std::stof(stipulation.substr(2));
     return {COOPERATIVE, SOLVER::DRAW};
+  }
+
+  else if (stipulation.substr(0, 1) == "#") {
+    nmoves = std::stof(stipulation.substr(1));
+    return {COMPETITIVE, SOLVER::MATE};
+  }
 
   else
     throw std::invalid_argument("unknown stipulation");
@@ -74,6 +81,10 @@ void loop(int argc, char *argv[]) {
 
       else if (stipulation.goal == SOLVER::DRAW)
         nsols = SOLVER::helpdraw(pos, n, search);
+    } else if (stipulation.searchType == COMPETITIVE) {
+      int n = (int)(2 * nmoves - 1);
+      if (stipulation.goal == SOLVER::MATE)
+        nsols = SOLVER::mate(pos, n, search);
     }
     std::cout << "finished nsols " << nsols << std::endl;
   }
