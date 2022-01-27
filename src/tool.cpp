@@ -2,7 +2,12 @@
 #include <sstream>
 #include <stdexcept>
 
-enum Stipulation { HELPMATE };
+enum SearchType { COOPERATIVE, COMPETITIVE };
+
+struct Stipulation {
+  SearchType searchType;
+  SOLVER::Goal goal;
+};
 
 // We expect input commands to be a line of text containing a stipulation,
 // followed by a valid FEN string.
@@ -23,7 +28,10 @@ Stipulation parse_line(Position &pos, float &nmoves, StateInfo *si,
   nmoves = std::stof(stipulation.substr(2));
 
   if (stipulation.substr(0, 2) == "h#")
-    return HELPMATE;
+    return {COOPERATIVE, SOLVER::MATE};
+
+  else if (stipulation.substr(0, 2) == "h=")
+    return {COOPERATIVE, SOLVER::DRAW};
 
   else
     throw std::invalid_argument("unknown stipulation");
@@ -55,14 +63,19 @@ void loop(int argc, char *argv[]) {
       break;
 
     float nmoves;
-    Stipulation goal = parse_line(pos, nmoves, &states->back(), line);
+    Stipulation stipulation = parse_line(pos, nmoves, &states->back(), line);
     search.init();
 
-    if (goal == HELPMATE) {
+    int nsols;
+    if (stipulation.searchType == COOPERATIVE) {
       int n = (int)(2 * nmoves);
-      int nsols = SOLVER::helpmate(pos, n, search);
-      std::cout << "finished nsols " << nsols << std::endl;
+      if (stipulation.goal == SOLVER::MATE)
+        nsols = SOLVER::helpmate(pos, n, search);
+
+      else if (stipulation.goal == SOLVER::DRAW)
+        nsols = SOLVER::helpdraw(pos, n, search);
     }
+    std::cout << "finished nsols " << nsols << std::endl;
   }
 
   Threads.stop = true;

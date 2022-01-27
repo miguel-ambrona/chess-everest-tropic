@@ -13,7 +13,7 @@ int main() {
   StateListPtr states(new std::deque<StateInfo>(1));
   static UTIL::Search search = UTIL::Search();
 
-  UTIL::Test tests[] = {
+  UTIL::Test helpmate_tests[] = {
       // Jeff Coakley, 1977 (ChessCafe.com in 2013)
       UTIL::Test("8/4K2k/4P2p/8/5q2/2b5/8/8 b - - 0 1", 6, 1),
 
@@ -38,10 +38,11 @@ int main() {
       // Miguel Ambrona, 2021 (Matplus.net)
       UTIL::Test("8/4K2k/4P2p/8/5q2/2b5/8/8 b - - 0 1", 6, 1)};
 
+  std::cout << "Running Helpmate tests:\n";
   for (int i = 0; i < 8; ++i) {
-    std::string fen = tests[i].test_fen();
-    Depth n = tests[i].test_depth();
-    int expected_nsols = tests[i].test_nsols();
+    std::string fen = helpmate_tests[i].test_fen();
+    Depth n = helpmate_tests[i].test_depth();
+    int expected_nsols = helpmate_tests[i].test_nsols();
 
     search.init();
     pos.set(fen, false, &states->back(), Threads.main());
@@ -52,7 +53,27 @@ int main() {
     assert(nsols == expected_nsols);
   };
 
-  std::cout << "Tests were successful!" << std::endl;
+  UTIL::Test helpdraw_tests[] = {
+      // Andrew Buchanan, 2017 (https://pdb.dieschwalbe.de/P1338362)
+      UTIL::Test("8/5p2/5P2/8/1p2pP2/kP2p3/1pKpP3/3B4 b - f3", 2, 1),
+  };
+
+  std::cout << "\nRunning Helpdraw tests:\n";
+  for (int i = 0; i < 1; ++i) {
+    std::string fen = helpdraw_tests[i].test_fen();
+    Depth n = helpdraw_tests[i].test_depth();
+    int expected_nsols = helpdraw_tests[i].test_nsols();
+
+    search.init();
+    pos.set(fen, false, &states->back(), Threads.main());
+
+    std::cout << "h=" << (n / 2) << " " << fen << std::endl;
+    int nsols = SOLVER::helpdraw(pos, n, search);
+    std::cout << "finished nsols " << nsols << std::endl;
+    assert(nsols == expected_nsols);
+  };
+
+  std::cout << "\nTests were successful!" << std::endl;
 
   return 0;
 };

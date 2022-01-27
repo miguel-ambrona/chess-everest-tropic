@@ -1,29 +1,38 @@
 #include "solver.h"
+#include "cha.h"
 #include "stockfish.h"
 
-// Given a position, returns the number of possible helpmates in [n]
-// or fewer plies where the losing player is the one with the turn on
-// the first call.
-// This function also prints on standard output the helpmate sequences
-// in UCI format.
+// Perform a cooperative search of depth [n] looking for a checkmate
+// or a dead draw (depending on the template parameter).
+//
+// Print in UCI format a line for each solution found.
+// It return the total number of solutions.
+template <SOLVER::Goal GOAL>
+int cooperative(Position &pos, Depth n, UTIL::Search &search) {
 
-int SOLVER::helpmate(Position &pos, Depth n, UTIL::Search &search) {
+  if (GOAL == SOLVER::MATE) {
+    if (MoveList<LEGAL>(pos).size() == 0 && pos.checkers()) {
+      if (search.search_depth() % 2 == 0)
+        search.print_solution();
+      return n % 2 == 0 ? 1 : 0;
+    };
+  }
+
+  if (GOAL == SOLVER::DRAW) {
+    if (CHA::is_dead(pos)) {
+      if (n == 0)
+        search.print_solution();
+      return n == 0;
+    }
+  }
+
+  if (n <= 0)
+    return 0;
 
   // To store an entry from the transposition table (TT)
   TTEntry *tte = nullptr;
   bool found;
   StateInfo st;
-
-  // Checkmate!
-  if (MoveList<LEGAL>(pos).size() == 0 && pos.checkers()) {
-    if (search.search_depth() % 2 == 0)
-      search.print_solution();
-
-    return n % 2 == 0 ? 1 : 0;
-  }
-
-  if (n <= 0)
-    return 0;
 
   tte = TT.probe(pos.key(), found);
 
@@ -36,11 +45,21 @@ int SOLVER::helpmate(Position &pos, Depth n, UTIL::Search &search) {
   for (const ExtMove &m : MoveList<LEGAL>(pos)) {
     pos.do_move(m, st);
     search.push(m);
-    cnt += SOLVER::helpmate(pos, n - 1, search);
+    cnt += cooperative<GOAL>(pos, n - 1, search);
     search.pop();
     pos.undo_move(m);
   }
 
   tte->save(pos.key(), VALUE_NONE, false, BOUND_NONE, n, MOVE_NONE, (Value)cnt);
   return cnt;
+}
+
+int SOLVER::helpmate(Position &pos, Depth n, UTIL::Search &search) {
+  TT.clear();
+  return cooperative<MATE>(pos, n, search);
+};
+
+int SOLVER::helpdraw(Position &pos, Depth n, UTIL::Search &search) {
+  TT.clear();
+  return cooperative<DRAW>(pos, n, search);
 };

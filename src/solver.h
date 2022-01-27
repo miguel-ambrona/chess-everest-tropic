@@ -6,8 +6,13 @@
 
 namespace SOLVER {
 
+enum Goal { MATE, DRAW };
+
 // Returns the number of possible helpmates in [n] or fewer plies
 int helpmate(Position &pos, Depth n, UTIL::Search &search);
+
+// Returns the number of possible helpdraws in exactly [n] plies
+int helpdraw(Position &pos, Depth n, UTIL::Search &search);
 
 } // namespace SOLVER
 
