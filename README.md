@@ -18,6 +18,14 @@ From the `lib/stockfish/` directory:
 
 3. Install Stockfish with `make install`.
 
+### Install Chess Unwinnability Analyzer (CHA):
+
+From the `lib/cha/` directory:
+
+1. Run `make` to download CHA's source code and compile it.
+
+2. Install CHA with `make install`.
+
 ### Install the tool
 
 From the `src/` directory:
