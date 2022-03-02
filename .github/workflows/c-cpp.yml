@@ -30,9 +30,23 @@ jobs:
       run: sudo make install
     - name: Enable shared libraries
       run: sudo /sbin/ldconfig -v
-    - name: make test
+    - name: (solver) make test
       working-directory: ./src/solver
       run: make test
-    - name: test
+    - name: (solver) test
       working-directory: ./src/solver
       run: ./test
+    - name: Install opam
+      run: sudo apt-get install opam && opam init
+    - name: Create opam switch
+      working-directory: ./src/reachability
+      run: eval $(opam env) && opam switch create . 4.13.0 --no-install
+    - name: Install opam packages
+      working-directory: ./src/reachability
+      run: eval $(opam env) && opam update && opam install . --deps-only -y
+    - name: (reachability) build
+      working-directory: ./src/reachability
+      run: eval $(opam env) && dune build
+    - name: (reachability) test
+      working-directory: ./src/reachability
+      run: eval $(opam env) && dune test

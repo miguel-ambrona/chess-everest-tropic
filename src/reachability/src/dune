@@ -1,0 +1,4 @@
+(library
+ (public_name ocaml-chess-reachability)
+ (name reachability)
+ (modules reachability position backwards))
