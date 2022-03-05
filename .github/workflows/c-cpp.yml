@@ -35,7 +35,7 @@ jobs:
       run: make test
     - name: (solver) test
       working-directory: ./src/solver
-      run: ./test
+      run: ./test.exe
     - name: Install opam
       run: sudo apt-get install opam && opam init
     - name: Create opam switch

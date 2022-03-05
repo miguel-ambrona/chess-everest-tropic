@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <iostream>
 #include <stdio.h>
-#include "backwards.h"
 
 int main() {
 
@@ -16,10 +15,6 @@ int main() {
 
   std::string fen = "8/3R2K1/4kP1P/3R3P/3P3P/4N1BP/7P/3B4 w - - 0 1";
   pos.set(fen, false, &states->back(), Threads.main());
-
-  backwards(pos);
-
-  return 0;
 
   UTIL::Test helpmate_tests[] = {
       // Jeff Coakley, 1977 (ChessCafe.com in 2013)
