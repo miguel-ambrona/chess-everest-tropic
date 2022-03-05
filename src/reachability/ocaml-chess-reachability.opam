@@ -1,0 +1,18 @@
+opam-version: "2.0"
+authors:    [ "Miguel <mac.ambrona@gmail.com>" ]
+maintainer: [ "Miguel <mac.ambrona@gmail.com>" ]
+synopsis: "A tool for deciding whether a given position can be reached
+           from the initial position of a chess game"
+homepage: "https://github.com/miguel-ambrona/chess-everest-tropic"
+dev-repo: "git+https://github.com/miguel-ambrona/chess-everest-tropic.git"
+bug-reports: "https://github.com/miguel-ambrona/chess-everest-tropic/issues"
+license: "GPL v3"
+depends: [
+  "ocaml" {>= "4.13"}
+  "dune" {>= "2.8.4"}
+  "alcotest" {>= "1.1.0" }
+]
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "test" "-p" name "-j" jobs] {with-test}
+]

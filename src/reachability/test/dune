@@ -1,0 +1,7 @@
+(copy_files ../src/{*.ml})
+
+(tests
+ (names test_position)
+ (modules test_position)
+ (package ocaml-chess-reachability)
+ (libraries ocaml-chess-reachability alcotest))

@@ -13,6 +13,9 @@ int main() {
   StateListPtr states(new std::deque<StateInfo>(1));
   static UTIL::Search search = UTIL::Search();
 
+  std::string fen = "8/3R2K1/4kP1P/3R3P/3P3P/4N1BP/7P/3B4 w - - 0 1";
+  pos.set(fen, false, &states->back(), Threads.main());
+
   UTIL::Test helpmate_tests[] = {
       // Jeff Coakley, 1977 (ChessCafe.com in 2013)
       UTIL::Test("8/4K2k/4P2p/8/5q2/2b5/8/8 b - - 0 1", 6, 1),
