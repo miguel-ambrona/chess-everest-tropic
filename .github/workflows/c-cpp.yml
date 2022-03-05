@@ -31,8 +31,8 @@ jobs:
     - name: Enable shared libraries
       run: sudo /sbin/ldconfig -v
     - name: make test
-      working-directory: ./src
+      working-directory: ./src/solver
       run: make test
     - name: test
-      working-directory: ./src
+      working-directory: ./src/solver
       run: ./test
